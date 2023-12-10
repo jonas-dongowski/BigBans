@@ -16,9 +16,10 @@ jobs:
           uses: actions/setup-node@v3
           with:
             node-version: '19.x'
-        - run: cd client
         - run: npm i
+          working-directory: ./client
         - run: npm run build
+          working-directory: ./client
         - uses: wangyoucao577/go-release-action@v1
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
