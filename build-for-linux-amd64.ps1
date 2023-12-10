@@ -1,0 +1,1 @@
+$env:CGO_ENABLED=1; $env:GOOS="linux"; $env:GOARCH="amd64"; go build .

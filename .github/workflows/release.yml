@@ -1,0 +1,40 @@
+on:
+    release:
+        types: [created]
+  
+permissions:
+    contents: write
+    packages: write
+  
+jobs:
+    release-linux-amd64:
+        name: release linux/amd64
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3
+        - name: Set up Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '19.x'
+        - run: npm i
+          working-directory: ./client
+        - run: npm run build
+          working-directory: ./client
+        - uses: wangyoucao577/go-release-action@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            goos: linux
+            goarch: amd64
+            asset_name: big-bans-linux-amd64
+            extra_files: public
+    release-windows-amd64:
+        name: release windows/amd64
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3
+        - uses: wangyoucao577/go-release-action@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            goos: windows
+            goarch: amd64
+            asset_name: big-bans-windows-amd64

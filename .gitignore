@@ -19,3 +19,12 @@
 
 # Go workspace file
 go.work
+
+# Exe
+big-bans
+
+# DB
+test.db
+
+# Temp dir
+tmp/
