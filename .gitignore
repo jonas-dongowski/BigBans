@@ -25,3 +25,6 @@ big-bans
 
 # DB
 test.db
+
+# Temp dir
+tmp/
