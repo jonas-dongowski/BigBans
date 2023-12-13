@@ -2,7 +2,7 @@ package main
 
 import (
 	"crypto/rand"
-	"encoding/base32"
+	"encoding/hex"
 	"log"
 	"time"
 
@@ -41,7 +41,7 @@ func generateRandomString(length int) string {
 	if err != nil {
 		panic(err)
 	}
-	return base32.StdEncoding.EncodeToString(b)
+	return hex.EncodeToString(b)
 }
 
 func main() {
