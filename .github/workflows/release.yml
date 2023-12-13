@@ -42,7 +42,7 @@ jobs:
           working-directory: ./client
         - uses: wangyoucao577/go-release-action@v1
           with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+            github_token: ${{ secrets.PAT }}
             goos: windows
             goarch: amd64
             asset_name: big-bans-windows-amd64
