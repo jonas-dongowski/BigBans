@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"log"
 	"os"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/ztrue/tracerr"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -76,6 +78,15 @@ func getConfig() (*Config, error) {
 	return config, nil
 }
 
+func appendToLogFile(msg string) {
+	file, _ := os.OpenFile("./log.txt", os.O_APPEND|os.O_WRONLY, os.ModePerm)
+
+	file.WriteString(msg)
+	file.WriteString("\n")
+
+	file.Close()
+}
+
 func main() {
 	// dsn := "root:localroot@tcp(127.0.0.1:3999)/bigbans?charset=utf8mb4&parseTime=True&loc=Local"
 	// db, dberr := gorm.Open(mysql.Open(dsn), &gorm.Config{
@@ -90,11 +101,13 @@ func main() {
 		var newConfig, configError = getConfig()
 
 		if configError != nil {
+			appendToLogFile(tracerr.SprintSource(configError))
 			return
 		}
 
 		config = newConfig
 	} else {
+		appendToLogFile(tracerr.SprintSource(errors.New("Config does not exist")))
 		return
 	}
 
