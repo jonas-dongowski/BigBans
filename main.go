@@ -152,7 +152,7 @@ func main() {
 
 		var session = Session{
 			PlayerUUID: body.PlayerUUID,
-			Token:      generateRandomString(32),
+			Token:      generateRandomString(16),
 		}
 
 		db.Save(&session)
