@@ -78,6 +78,12 @@ func getConfig() (*Config, error) {
 	return config, nil
 }
 
+func createLogFile() {
+	file, _ := os.Create("./log.txt")
+
+	file.Close()
+}
+
 func appendToLogFile(msg string) {
 	file, _ := os.OpenFile("./log.txt", os.O_APPEND|os.O_WRONLY, os.ModePerm)
 
@@ -95,6 +101,8 @@ func main() {
 	// 		NoLowerCase:   true,
 	// 	},
 	// })
+	createLogFile()
+
 	var config *Config
 
 	if configExists() {
