@@ -137,6 +137,12 @@ func main() {
 	app.Static("/", "public")
 
 	app.Post("/api/sessions", func(c *fiber.Ctx) error {
+		var psk = c.Get("X-PSK")
+
+		if psk != config.PreSharedKey {
+			return c.SendStatus(fiber.StatusUnauthorized)
+		}
+
 		var body = new(CreateSession)
 		var bodyError = c.BodyParser(&body)
 
