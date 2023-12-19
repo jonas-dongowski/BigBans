@@ -7,6 +7,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,7 +19,7 @@ import (
 )
 
 type Config struct {
-	WebServerPort    string `json:"web_server_port"`
+	WebServerPort    int    `json:"web_server_port"`
 	ExternalURL      string `json:"external_url"`
 	PreSharedKey     string `json:"psk"`
 	DatabaseFilePath string `json:"db_file_path"`
@@ -87,7 +88,7 @@ func createLogFile() {
 func appendToLogFile(msg string) {
 	file, _ := os.OpenFile("./log.txt", os.O_APPEND|os.O_WRONLY, os.ModePerm)
 
-	file.WriteString(msg)
+	file.WriteString("[" + time.Now().Format(time.RFC1123) + "] " + msg)
 	file.WriteString("\n")
 
 	file.Close()
@@ -157,5 +158,5 @@ func main() {
 		return c.JSON(createdSession)
 	})
 
-	log.Fatal(app.Listen(":" + config.WebServerPort))
+	log.Fatal(app.Listen(":" + strconv.Itoa(config.WebServerPort)))
 }
