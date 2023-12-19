@@ -3,7 +3,9 @@ package main
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,6 +14,13 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+type Config struct {
+	WebServerPort    string `json:"web_server_port"`
+	ExternalURL      string `json:"external_url"`
+	PreSharedKey     string `json:"psk"`
+	DatabaseFilePath string `json:"db_file_path"`
+}
 
 type Ban struct {
 	gorm.Model
@@ -44,6 +53,29 @@ func generateRandomString(length int) string {
 	return hex.EncodeToString(b)
 }
 
+func configExists() bool {
+	_, err := os.Stat("../config.json")
+
+	return err == nil
+}
+
+func getConfig() (*Config, error) {
+	config := new(Config)
+	data, fileError := os.ReadFile("../config.json")
+
+	if fileError != nil {
+		return nil, fileError
+	}
+
+	jsonError := json.Unmarshal(data, config)
+
+	if jsonError != nil {
+		return nil, jsonError
+	}
+
+	return config, nil
+}
+
 func main() {
 	// dsn := "root:localroot@tcp(127.0.0.1:3999)/bigbans?charset=utf8mb4&parseTime=True&loc=Local"
 	// db, dberr := gorm.Open(mysql.Open(dsn), &gorm.Config{
@@ -52,8 +84,21 @@ func main() {
 	// 		NoLowerCase:   true,
 	// 	},
 	// })
+	var config *Config
 
-	db, dberr := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if configExists() {
+		var newConfig, configError = getConfig()
+
+		if configError != nil {
+			return
+		}
+
+		config = newConfig
+	} else {
+		return
+	}
+
+	db, dberr := gorm.Open(sqlite.Open(config.DatabaseFilePath), &gorm.Config{})
 
 	if dberr != nil {
 		panic("Failed to connect to local database")
@@ -91,5 +136,5 @@ func main() {
 		return c.JSON(createdSession)
 	})
 
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":" + config.WebServerPort))
 }
